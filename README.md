@@ -46,7 +46,7 @@ Simple run options:
 .\certdog-iis.ps1 -new
 ```
 
-This will prompt for all information including the certdog login as well as the binding and certificate details. See the sample output below for more details
+This will prompt for all information including the certdog login as well as the binding and certificate details
 
 
 
