@@ -922,8 +922,14 @@ Function Create-Task()
 		
 			$description = "Checks for expiry of TLS certificates bound to IIS"
 			$taskName = "Certdog Cert Expiry Check"
-				
-			$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-Command `"& 'C:\IIS Automation\certdog.ps1' -renew`"" -WorkingDirectory $PSScriptRoot
+			
+			$scriptLoc = "$PSScriptRoot\$script:scriptName"
+			$arg = "-Command `"& '$scriptLoc' -renew`""
+			if ($script:IgnoreTlsErrors)
+			{
+				$arg = "-Command `"& '$scriptLoc' -renew -ignoreSslErrors`""
+			}
+			$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument $arg -WorkingDirectory $PSScriptRoot
 
 			# Run every day a random time between 1am and 3am
 			$trigger =  New-ScheduledTaskTrigger -Daily -DaysInterval 1 -At 1am -RandomDelay (New-TimeSpan -minutes 120)
