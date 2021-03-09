@@ -110,7 +110,7 @@ $script:sslFlags = 0
 $script:scriptName = "certdog-iis.ps1"
 
 # By default we do not ignore SSL errors
-$script:IgnoreSslerrors = $false
+$script:IgnoreTlsErrors = $false
 
 # The list of updated bindings, if any, that may be saved
 $script:UpdatedBindings = @()
@@ -128,7 +128,7 @@ $script:loggedIn = $false
 Function IgnoreSSLErrors
 {
     #Set-Variable -Name "IGNORE_SSL_ERRORS" -Force -Value $true -Visibility Private -Scope Global
-	$script:IgnoreSslerrors = $true
+	$script:IgnoreTlsErrors = $true
 }
 
 # -----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ Function login
     try 
     {
         #$ignoreSSL = Get-Variable -Name "IGNORE_SSL_ERRORS" -ValueOnly -ErrorAction SilentlyContinue
-		if ($script:IgnoreSslerrors)
+		if ($script:IgnoreTlsErrors)
         {
             # NOTE: This skips the SSL certificate check
         add-type @"
@@ -228,7 +228,7 @@ Function Run-Rest-Command
         }
 
         #$ignoreSSL = Get-Variable -Name "IGNORE_SSL_ERRORS" -ValueOnly -ErrorAction SilentlyContinue
-        if ($script:IgnoreSslerrors)
+        if ($script:IgnoreTlsErrors)
         {
             # NOTE: This skips the SSL certificate check
         add-type @"
