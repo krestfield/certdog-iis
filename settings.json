@@ -1,0 +1,12 @@
+{
+	"certdogUrl" : "https://127.0.0.1/certdog/api",
+	"certIssuerName" : "Test CA",
+	"renewalDays" : 30,
+	"csrKeyLength" : 2048,
+	"csrHash" : "sha256",
+	"csrProvider" : "Microsoft RSA SChannel Cryptographic Provider",
+	"csrProviderType" : 12,
+	"exportable" : "FALSE",
+	"eventLogId" : 5280,
+	"errorLogId" : 5281
+}
