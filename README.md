@@ -6,6 +6,12 @@ Full details on this script can be found here [https://krestfield.github.io/docs
 
 
 
+More info on certdog: https://krestfield.com/certdog
+
+All the documentation: https://krestfield.github.io/docs/certdog/certdog.html
+
+
+
 ## Pre-requisites
 
 An instance of certdog is required. A Docker image of certdog can be obtained from here:  
@@ -13,6 +19,8 @@ An instance of certdog is required. A Docker image of certdog can be obtained fr
 [https://hub.docker.com/r/krestfield/certdog](https://hub.docker.com/r/krestfield/certdog)
 
 You may also install the application locally. Contact [Krestfield Support](mailto:support@krestfield.com) to obtain the installer
+
+You may make use of the test environment here: [https://certdog.net/certdog/api](https://certdog.net/certdog/api). If this is not available, or if you wish to make changes, email us at [support@krestfield.com](mailto:support@krestfield.com)
 
 
 
@@ -116,8 +124,8 @@ Settings are stored within the ``settings.json`` file. Sample contents:
 
 ```json
 {
-	"certdogUrl" : "https://127.0.0.1/certdog/api",
-	"certIssuerName" : "Test CA",
+	"certdogUrl" : "https://certdog.net/certdog/api",
+	"certIssuerName" : "Certdog TLS",
 	"renewalDays" : 30,
 	"csrKeyLength" : 2048,
 	"csrHash" : "sha256",
