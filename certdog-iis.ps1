@@ -80,17 +80,17 @@
 # ------------------------------------------------------------------------------------------------
 Param (
     [switch]
-	$new,
+    $new,
     [switch]
-	$renew,
-	[switch]
-	$list,
-	[switch]
-	$taskonly,
-	[switch]
-	$setcreds,
+    $renew,
     [switch]
-	$ignoreSslErrors,
+    $list,
+    [switch]
+    $taskonly,
+    [switch]
+    $setcreds,
+    [switch]
+    $ignoreSslErrors,
     [Parameter(Mandatory=$false)]
     $username,
     [Parameter(Mandatory=$false)]
@@ -127,8 +127,7 @@ $script:loggedIn = $false
 # -----------------------------------------------------------------------------
 Function IgnoreSSLErrors
 {
-    #Set-Variable -Name "IGNORE_SSL_ERRORS" -Force -Value $true -Visibility Private -Scope Global
-	$script:IgnoreTlsErrors = $true
+    $script:IgnoreTlsErrors = $true
 }
 
 # -----------------------------------------------------------------------------
@@ -155,10 +154,9 @@ Function login
 
     try 
     {
-        #$ignoreSSL = Get-Variable -Name "IGNORE_SSL_ERRORS" -ValueOnly -ErrorAction SilentlyContinue
-		if ($script:IgnoreTlsErrors)
+	if ($script:IgnoreTlsErrors)
         {
-            # NOTE: This skips the SSL certificate check
+        # NOTE: This skips the SSL certificate check
         add-type @"
         using System.Net;
         using System.Security.Cryptography.X509Certificates;
@@ -173,7 +171,6 @@ Function login
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy 
         }
 
-        #Write-Host "Logging in to certdog at: $certdogUrl" 
         $response = Invoke-RestMethod "$certdogUrl/login" -Method "POST" -Headers $initialHeaders -Body $body
         
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -181,11 +178,11 @@ Function login
         $authToken = $response.token
         $headers.Add("Authorization", "Bearer $authToken")
         Set-Variable -Name "HEADERS" -Force -Value $headers -Visibility Private -Scope Global
-		$script:loggedIn = $true
+	$script:loggedIn = $true
     }
     catch 
     {
-		$script:loggedIn = $false
+	$script:loggedIn = $false
         Throw "Authentication to certdog at $certdogUrl failed`nError: $_" 
     }
 }
@@ -227,10 +224,9 @@ Function Run-Rest-Command
             Return
         }
 
-        #$ignoreSSL = Get-Variable -Name "IGNORE_SSL_ERRORS" -ValueOnly -ErrorAction SilentlyContinue
         if ($script:IgnoreTlsErrors)
         {
-            # NOTE: This skips the SSL certificate check
+        # NOTE: This skips the SSL certificate check
         add-type @"
         using System.Net;
         using System.Security.Cryptography.X509Certificates;

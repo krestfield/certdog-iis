@@ -1,6 +1,6 @@
 {
-	"certdogUrl" : "https://127.0.0.1/certdog/api",
-	"certIssuerName" : "Test CA",
+	"certdogUrl" : "https://certdog.net/certdog/api",
+	"certIssuerName" : "Certdog TLS",
 	"renewalDays" : 30,
 	"csrKeyLength" : 2048,
 	"csrHash" : "sha256",
