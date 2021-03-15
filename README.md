@@ -2,7 +2,11 @@
 
 This script can be used to generate certificates, bind them to IIS sites and then automatically renew  
 
-Full details on this script can be found here [https://krestfield.github.io/docs/certdog/iis_powershell.html](https://krestfield.github.io/docs/certdog/iis_powershell.html)
+Full details on this script can be found here [https://krestfield.github.io/docs/certdog/iis_powershell.html](https://krestfield.github.io/docs/certdog/iis_powershell.html)  
+
+
+
+Get the signed version of this script from [here](https://krestfield.s3.eu-west-2.amazonaws.com/certdog/certdog-iis.ps1)  
 
 
 
