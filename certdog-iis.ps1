@@ -128,6 +128,24 @@ $script:loggedIn = $false
 Function IgnoreSSLErrors
 {
     $script:IgnoreTlsErrors = $true
+
+	if ("TrustAllCertsPolicy" -as [type]) {} 
+	else 
+	{
+	# NOTE: This skips the SSL certificate check
+	add-type @"
+	using System.Net;
+	using System.Security.Cryptography.X509Certificates;
+	public class TrustAllCertsPolicy : ICertificatePolicy {
+		public bool CheckValidationResult(
+			ServicePoint srvPoint, X509Certificate certificate,
+			WebRequest request, int certificateProblem) {
+			return true;
+		}
+	}
+"@
+[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy 
+	}
 }
 
 # -----------------------------------------------------------------------------
@@ -154,23 +172,6 @@ Function login
 
     try 
     {
-	if ($script:IgnoreTlsErrors)
-        {
-        # NOTE: This skips the SSL certificate check
-        add-type @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy 
-        }
-
         $response = Invoke-RestMethod "$certdogUrl/login" -Method "POST" -Headers $initialHeaders -Body $body
         
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -222,23 +223,6 @@ Function Run-Rest-Command
         {
             Write-Host "Please authenticate with Login -username [username] -password [password] (or just type Login to be prompted)"
             Return
-        }
-
-        if ($script:IgnoreTlsErrors)
-        {
-        # NOTE: This skips the SSL certificate check
-        add-type @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy 
         }
 
         $response = Invoke-RestMethod "$certdogUrl/$endPoint" -Headers $headers -Method $method -Body $body
