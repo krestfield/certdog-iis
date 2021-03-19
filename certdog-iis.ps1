@@ -259,11 +259,11 @@ Function Request-CertP10
         [Parameter(Mandatory=$false)]
         $csr,
         [Parameter(Mandatory=$false)]
+        $teamName,
+        [Parameter(Mandatory=$false)]
         $extraInfo,
         [Parameter(Mandatory=$false)]
-        [string[]]$extraEmails,
-        [Parameter(Mandatory=$false)]
-        $display
+        [string[]]$extraEmails
     )
 
 	if ($script:loggedIn -eq $false)
@@ -281,6 +281,7 @@ Function Request-CertP10
 		$body = [Ordered]@{
 			'caName' = "$caName"
 			'csr' = "$csr"
+			'teamName' = "$teamName"
 			'extraInfo' = "$extraInfo"
 			'extraEmails' = @($extraEmails)
 		} | ConvertTo-Json -Compress
@@ -389,7 +390,10 @@ Function Request-Cert
         $caName,
         [Parameter(Mandatory=$true)]
         [string]
-        $csr
+        $csr,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $teamName
     )
 
 	if ($script:loggedIn -eq $false)
@@ -398,11 +402,11 @@ Function Request-Cert
 		$script:loggedIn = $true
 	}
 	
-	$cert = Request-CertP10 -caName $caName -csr $csr
+	$cert = Request-CertP10 -caName $caName -csr $csr -teamName $teamName
 
 	#Logout
 	
-	return $cert
+	return $cert.pemCert
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -1172,7 +1176,7 @@ Function CheckFor-ExpiringCerts
 						# Need to convert from secure
 						$username = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($script:CertdogSecureUsername))
 						$password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($script:CertdogSecurePassword))						
-						$cert = Request-Cert -username $username -password $password -caName $global:Settings.certIssuerName -csr "$csr"
+						$cert = Request-Cert -username $username -password $password -caName $global:Settings.certIssuerName -csr "$csr" -teamName $global:Settings.teamName
 						Write-Event -message "Obtained new certificate from certdog OK"
 						
 						# Import the certificate
@@ -1266,12 +1270,17 @@ Function Get-NewCert
 		$caName = $global:Settings.certIssuerName
 
 		# Generate the CSR
+		Write-Host "`nGenerating certificate request..."
 		$csr = Generate-Csr -dn $dn -sans $sans
+		Write-Host "Request created OK"
 		
 		# Request and obtain the certificate
-		$cert = Request-Cert -username $username -password $password -caName $caName -csr "$csr"
+		Write-Host "`nRequesting certificate..."
+		$cert = Request-Cert -username $username -password $password -caName $caName -csr "$csr" -teamName $global:Settings.teamName
+		Write-Host "Obtained certificate OK"
 		
 		# Import the certificate
+		Write-Host "`nImporting certificate..."
 		$newCert = Import-Cert $cert
 		
 		Write-Host "`nCertificate has been issued and imported OK`n"
@@ -1319,7 +1328,7 @@ Function Renew-Cert
 	$global:RenewLogFile = Get-RenewLogFile
 	
 	# all files named *.xml in the .\config dir
-	$settingsFiles = Get-ChildItem -Path "$PSScriptRoot\config" -Name -Include *.xml
+	$settingsFiles = Get-ChildItem -Path "$PSScriptRoot\config" -Name -Include *.xml -ErrorAction SilentlyContinue
 	
 	if ($settingsFiles)
 	{
@@ -1493,13 +1502,12 @@ try {
 		Save-Credentials
 	}
 	else {
-		Write-Event -message "Nothing to do. Call either -new, -renew, -list, -taskonly or -setcreds"
+		Write-Host "Nothing to do. Call either -new, -renew, -list, -taskonly or -setcreds"
 	}
 }
 catch {
 	Write-Host $_	
 }
-
 
 # -------------------------------------------------------------------------------------------
 # 
